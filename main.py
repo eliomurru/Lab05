@@ -143,6 +143,7 @@ def main(page: ft.Page):
                controls=[input_responsabile, pulsante_conferma_responsabile],
                alignment=ft.MainAxisAlignment.CENTER),
 
+        ft.Divider(),
         # Sezione 3
         txt_aggiungi_auto,
         ft.Row([input_marca, input_modello, input_anno], alignment=ft.MainAxisAlignment.CENTER),
