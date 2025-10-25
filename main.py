@@ -41,26 +41,26 @@ def main(page: ft.Page):
 
     input_marca = ft.TextField(label="Marca", width=200)
     input_modello = ft.TextField(label="Modello", width=200)
-    input_anno = ft.TextField(label="Anno", width=100, input_filter=ft.NumbersOnlyInputFilter())
+    input_anno = ft.TextField(label="Anno", width=200)
 
     # --- CONTATORE POSTI ---
     posti = ft.Ref[int]()
-    posti.current = 4
-    txt_posti = ft.Text(f"Posti: {posti.current}", size=16)
+    posti.current = 0
+    txt_posti = ft.Text(f"{posti.current}", size=16)
 
     def incrementa_posti(e):
         posti.current += 1
-        txt_posti.value = f"Posti: {posti.current}"
+        txt_posti.value = f"{posti.current}"
         page.update()
 
     def decrementa_posti(e):
         if posti.current > 1:
             posti.current -= 1
-            txt_posti.value = f"Posti: {posti.current}"
+            txt_posti.value =  f"{posti.current}"
             page.update()
 
-    btn_meno = ft.IconButton(ft.Icons.REMOVE, on_click=decrementa_posti)
-    btn_piu = ft.IconButton(ft.Icons.ADD, on_click=incrementa_posti)
+    btn_meno = ft.IconButton(ft.Icons.REMOVE, on_click=decrementa_posti, icon_color= 'red')
+    btn_piu = ft.IconButton(ft.Icons.ADD, on_click=incrementa_posti, icon_color= 'green')
     contatore_posti = ft.Row([ btn_meno, txt_posti, btn_piu ], alignment=ft.MainAxisAlignment.CENTER)
 
 
@@ -95,14 +95,16 @@ def main(page: ft.Page):
 
         try:
             anno = int(anno_str)
-            if anno < 1900 or anno > 2025:
+            if anno < 1980 or anno > 2025: #1980 valore indicativo, 2025 max poichè non può essere 2026
                 raise ValueError
         except ValueError:
             alert.show_alert("❌ Errore: inserisci un anno numerico valido (es. 2023).")
             return
 
         try:
-            n_posti = int(posti.value)
+            n_posti = int(posti.current)
+            if n_posti <= 0:
+                raise ValueError
         except ValueError:
             alert.show_alert("❌ Errore: inserisci un numero valido di posti.")
             return
@@ -112,11 +114,11 @@ def main(page: ft.Page):
             input_marca.value = ""
             input_modello.value = ""
             input_anno.value = ""
-            posti.value = 4
-            txt_posti.value = f"Posti: {posti.value}"
+            posti.current = 0
+            txt_posti.value = f"Posti: {posti.current}"
             aggiorna_lista_auto()
-            page.update()
             alert.show_alert("✅ Automobile aggiunta correttamente!")
+            page.update()
         except Exception as e:
             alert.show_alert(f"❌ Errore: {e}")
 
@@ -146,8 +148,7 @@ def main(page: ft.Page):
         ft.Divider(),
         # Sezione 3
         txt_aggiungi_auto,
-        ft.Row([input_marca, input_modello, input_anno], alignment=ft.MainAxisAlignment.CENTER),
-        contatore_posti,
+        ft.Row([input_marca, input_modello, input_anno, contatore_posti], alignment=ft.MainAxisAlignment.CENTER),
         pulsante_aggiungi_auto,
 
         # Sezione 4
